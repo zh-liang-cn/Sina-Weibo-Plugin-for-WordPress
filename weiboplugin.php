@@ -47,37 +47,33 @@ class WeiboPlugin{
 		}
 	}
 	function get_access_token()
-	{
-		$oauth = new WeiboOAuth(APP_KEY, APP_SECRET, $_SESSION['request']['oauth_token'], $_SESSION['request']['oauth_token_secret']);
-		$token = $oauth->getAccessToken( $_REQUEST['oauth_verifier']);
-		if($token)
-		{
-			update_option('weibo_oauth_token', $token['oauth_token']);
-			update_option('weibo_oauth_secret', $token['oauth_token_secret']);
-		}
-	}
-	/**
-	 * 输出微博内容
-	 */
+    {
+        $oauth = new WeiboOAuth(APP_KEY, APP_SECRET, $_SESSION['request']['oauth_token'], $_SESSION['request']['oauth_token_secret']);
+        $token = $oauth->getAccessToken( $_REQUEST['oauth_verifier']);
+        if($token)
+        {
+            update_option('weibo_oauth_token', $token['oauth_token']);
+            update_option('weibo_oauth_secret', $token['oauth_token_secret']);
+        }
+        }
+    /**
+     * 输出微博内容
+     */
 	function output_tweets($oauth_token , $oauth_secret, $tweet_count=5)
-	{
-		$c = new WeiboClient( APP_KEY , APP_SECRET , $oauth_token , $oauth_secret );
-		$ms  = $c->user_timeline(1, $tweet_count);
-		$me = $c->verify_credentials();
+    {
+        $c = new WeiboClient( APP_KEY , APP_SECRET , $oauth_token , $oauth_secret );        $ms = $c->user_timeline(1, $tweet_count);        $me = $c->verify_credentials();        if(count($ms) == 0)        {            echo '<p>你还没有发过微博吧，到新浪微博去发一个呗 :)</p>';        }        else        {
 		?>
-		<ul id="weibo">
-		<?php foreach( $ms as $item ){ ?>
-		<li>
-			<?php
-			$text = $item['text'];
-			echo $this->format_tweet($text);
-			
-			$format = human_readable_time($item['created_at']);            $tweet_url = 'http://api.weibo.com/'.$item['user']['id'].'/statuses/'.$item['id'].'?source='.APP_KEY;			echo "&nbsp;&nbsp;<a href='$tweet_url' class='weibo_link' target='_blank'>${format}前</a>";
-			?>
-		</li>
-		<?php }?>
-		</ul>
-		<?php
+            <ul id="weibo">
+                <?php foreach( $ms as $item ){ ?>
+                <li>
+                    <?php                    $text = $item['text'];
+                    echo $this->format_tweet($text);
+                    $format = human_readable_time($item['created_at']);                    $tweet_url = 'http://api.weibo.com/'.$item['user']['id'].'/statuses/'.$item['id'].'?source='.APP_KEY;                    echo "&nbsp;&nbsp;<a href='$tweet_url' class='weibo_link' target='_blank'>${format}前</a>";
+                    ?>
+                </li>
+                <?php }?>
+            </ul>
+		<?php            echo "<p class='follow_me'><a href='http://weibo.com/" . $me['name'] . "' target='_blank'>关注我吧</a></p>";        }
 	}
 	private function format_tweet($tweet_msg)
 	{        $tweet_msg = add_topic_link($tweet_msg);
@@ -89,7 +85,7 @@ class WeiboPlugin{
 	 */
 	function output_authorize_url($callback_url)
 	{
-		$oauth = new WeiboOAuth(APP_KEY, APP_SECRET);	
+		$oauth = new WeiboOAuth(APP_KEY, APP_SECRET);
 		if(! isset($_SESSION['request']))
 		{
 			$token = $oauth->getRequestToken();
@@ -131,8 +127,7 @@ function weibo_plugin_admin()
 	{
 		$c = new WeiboClient( APP_KEY , APP_SECRET , $token['key'] , $token['secret'] );
 		$ms  = $c->user_timeline();
-		$me = $c->verify_credentials();
-		?>
+		$me = $c->verify_credentials();		?>
 		<h2>新浪微博</h2>
 		<p>授权新浪用户名：<?=$me['name']?></p>
 		<form action="" method="POST">
@@ -164,9 +159,7 @@ class Weibo_Widget extends WP_Widget
 			echo $before_title . $title . $after_title;
 		}        
 		$weibo = new WeiboPlugin();
-		$opts = $weibo->get_weibo_options();
-		$weibo->output_tweets($opts['key'], $opts['secret'], $instance['tweet_count']); 
-		echo $after_widget;
+		$opts = $weibo->get_weibo_options();        if( $opts == False )        {            echo "<p>有没有搞错，你都没有获取新浪微博授权，赶紧点  <a href='wp-admin/plugins.php?page=weibo-auth' target='_blank'>这里</a>  点击去找新浪，浪啊浪！</p>";        }        else        {            $weibo->output_tweets($opts['key'], $opts['secret'], $instance['tweet_count']);             echo $after_widget;        }
 	}
 	function form($instance)
 	{
