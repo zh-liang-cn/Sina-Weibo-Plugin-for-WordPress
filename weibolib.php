@@ -24,11 +24,11 @@ function add_url_link($tweet_msg)
 
 function add_at_link($tweet_msg)
 {
-    preg_match_all ( '/(@.*?)[:\s]/u', $tweet_msg, $matches, PREG_SET_ORDER);
+    preg_match_all ( '/@(.*?)[:\s]/', $tweet_msg, $matches, PREG_SET_ORDER);
     foreach( $matches as $match )
     {
         $url = $match[1];
-        $tweet_msg = str_replace( $match[1], "<a href='".$url."' target='_blank'>".$match[1]."</a>" , $tweet_msg) ;
+        $tweet_msg = str_replace( $match[0], "<a href='http://weibo.com/n/".$url."' target='_blank'>@".$match[1]."</a> " , $tweet_msg) ;
     }
     return $tweet_msg;
 }
