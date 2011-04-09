@@ -72,7 +72,7 @@ class WeiboPlugin{
 			$text = $item['text'];
 			echo $this->format_tweet($text);
 			
-			$format = human_readable_time($item['created_at']);            $tweet_url = 'http://api.weibo.com/'.$item['user']['id'].'/statuses/'.$item['id'].'?source='.APP_KEY;			echo "<a href='$tweet_url' class='weibo_link' target='_blank'>${format}前</a>";
+			$format = human_readable_time($item['created_at']);            $tweet_url = 'http://api.weibo.com/'.$item['user']['id'].'/statuses/'.$item['id'].'?source='.APP_KEY;			echo "&nbsp;&nbsp;<a href='$tweet_url' class='weibo_link' target='_blank'>${format}前</a>";
 			?>
 		</li>
 		<?php }?>
@@ -206,9 +206,9 @@ add_action('admin_menu', 'weibo_admin_page');
  * 添加微博列表的样式表
  */
 function weibo_include_css()
-{
+{    $plugin_name = dirname(__FILE__);    $segs = preg_split('|[\\/\\\\]|', $plugin_name);    $plugin_name = $segs[count($segs)-1];
 ?>
-<link rel="stylesheet" type="text/css" media="all" href="<?= WP_PLUGIN_URL.'/sinaweibo/'?>weibo.css" />
+<link rel="stylesheet" type="text/css" media="all" href="<?= WP_PLUGIN_URL.'/'.$plugin_name.'/'?>weibo.css" />
 <?php
 }
 //注册微博列表的样式
