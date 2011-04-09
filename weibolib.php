@@ -24,7 +24,7 @@ function add_url_link($tweet_msg)
 
 function add_at_link($tweet_msg)
 {
-    preg_match_all ( '/(@.*?):/u', $tweet_msg, $matches, PREG_SET_ORDER);
+    preg_match_all ( '/(@.*?)[:\s]/u', $tweet_msg, $matches, PREG_SET_ORDER);
     foreach( $matches as $match )
     {
         $url = $match[1];
